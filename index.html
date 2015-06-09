@@ -4,6 +4,13 @@
 	html { height: 100% }
 	body { height: 80%; margin: 40; padding: 0 }
 	#map-canvas { height: 100% }
+	#chat-box{
+		height:250px;
+		border:2px solid #ACD8F0;
+		border-radius: 5px;
+		margin-bottom: 5px;
+		margin-top: 15px;
+	}
 	</style>
 	
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXK2IgKVrtxAbX2KnKEAnAmsVvBNfrhts&sensor=false&libraries=geometry,drawing">
@@ -14,7 +21,7 @@
 
 	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.leanModal.min.js"></script>
-
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="ericprieto-simply-toast-6d5bbb5/simply-toast.js"></script>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
@@ -22,9 +29,35 @@
 
 	<script type="text/javascript" src="collectpoints.js"></script> 
 	<script type="text/javascript" src="geoencode.js"></script>
-	
 	<script type="text/javascript">
-	
+		jQuery(document).ready(function($) { 
+
+			// Find the toggles and hide their content
+			$('.toggle').each(function(){
+				$(this).find('.toggle-content').hide();
+			});
+
+			// When a toggle is clicked (activated) show their content
+			$('.toggle a.toggle-trigger').click(function(){
+				var el = $(this), parent = el.closest('.toggle');
+
+				if( el.hasClass('active') )
+				{
+					parent.find('.toggle-content').slideToggle();
+					el.removeClass('active');
+				}
+				else
+				{
+					parent.find('.toggle-content').slideToggle();
+					el.addClass('active');
+				}
+				return false;
+			});
+
+		});  //End
+	</script>
+	<script type="text/javascript">
+	var side = 1;
 	function new_marker() {
 		google.maps.event.removeListener(listener_manager);
 		var polyOptions = {
@@ -708,9 +741,11 @@
 	
 	function PopulateNegotiationPlaces()
 	{
+		
 		$('#negotiation').css('display' , 'inline');
 		$('#safe_path').css('display' , 'none');
 		$('#map-canvas').css('width' , '75%');
+		$('#chatbox').css('display' , 'inline');
 		clearOverlays();
 		remove();
 		//$('#negotiation').css('display' , 'inline');
@@ -1223,9 +1258,29 @@
 	}
 	/* Safe Path Code Ends */
 
+	function chat()
+	{
+		var box = document.getElementById("list");
+		var text = document.getElementById("text-message").value;
+		if(side == 1){
+		var temp = '<li><span class="right">'+text+'</span><div class="clear"></div></li>';
+		side ++;
+		}
+		else if (side==2){
+			var temp = '<li><span class="left">'+text+'</span><div class="clear"></div></li>';
+			side = 1;
+		}
+		box.innerHTML = box.innerHTML + temp; 
+
+	/*	var node = document.createElement("LI");
+    	var textnode = document.createTextNode(temp);
+    	node.appendChild(textnode);
+    	document.getElementById("list").appendChild(node);*/
+	}
+
 	</script>
 	<style type="text/css">
-		body, #box{
+		body{
 			width: 100%;
 		}
 		#map-canvas{
@@ -1238,9 +1293,9 @@
 			width: 18%;
 			float: right;
 			display: none;
-			margin-right: 1%;
-			margin-top: 2%;
-			height: 100%;
+			margin-right: 2%;
+			margin-top: -2%;
+			height: 50%;
 			border: 5px solid brown;
 			background: url(../img/hd-bg.png);
 		}
@@ -1269,6 +1324,211 @@
 		#obstructions_checklist{
 			text-align: center;
 		}
+
+			#chatbox{
+				display: none;
+				width: 20%;
+				float: right;
+				margin-right: 3px;
+				margin-top: 2px;
+			}
+            .messages
+            {
+                padding: 10px;
+                height: 200px;
+                background-color: green;
+                background-color: rgb(237, 239, 244);
+                border-width: 1px;
+                border-color: black;
+                border-style: solid;
+                overflow-y: scroll;
+            }
+
+            .messages ul
+            {
+                padding: 0px;
+                list-style-type: none;
+            }
+
+            .messages ul li
+            {
+                height: auto;
+                margin-bottom: 10px;
+                clear: both;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .messages ul li span
+            {
+                display: inline-block;
+                max-width: 200px;
+                background-color: white;
+                padding: 5px;
+                border-radius: 4px;
+                position: relative;
+                border-width: 1px;
+                border-style: solid;
+                border-color: grey;
+            }
+
+            .messages ul li span.left
+            {
+                float: left;
+            }
+
+            .messages ul li span.left:after
+            {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                left: -8.5px;
+                top: 7px;
+                height: 0px;
+                width: 0px;
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-right: 8px solid white;
+            }
+
+            .messages ul li span.left:before
+            {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                left: -9px;
+                top: 7px;
+                height: 0px;
+                width: 0px;
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-right: 8px solid black;
+            }
+
+            .messages ul li span.right:after
+            {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                right: -8px;
+                top: 6px;
+                height: 0px;
+                width: 0px;
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-left: 8px solid #dbedfe;
+            }
+
+            .messages ul li span.right:before
+            {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                right: -9px;
+                top: 6px;
+                height: 0px;
+                width: 0px;
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-left: 8px solid black;
+            }
+
+            .messages ul li span.right
+            {
+                float: right;
+                background-color: #dbedfe;
+            }
+
+            .clear
+            {
+                clear: both;
+            }
+
+            .input-box
+            {
+                background-color: white;
+                height: 50px;
+                padding: 0px;
+            }
+
+            .input-box textarea
+            {
+                padding: 0px;
+                width: 100%;
+                height: 100%;
+                display: inline-block;
+                outline: 0px;
+                border-width: 0px;
+                resize: none;
+                border-width: 1px;
+                border-color: black;
+                border-style: solid;
+                font-size: 12px;
+                padding: 10px;
+                border-top-width: 0px;
+                border-radius: 5px;
+            }
+	</style>
+
+
+	<style type="text/css">
+
+	/* Main toggle */
+	.toggle { 
+		font-size: 13px;
+		line-height:20px;
+		font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		background: #ffffff; /* Main background */
+		margin-bottom: 10px;
+		border: 1px solid #e5e5e5;
+		-webkit-border-radius: 5px;
+		   -moz-border-radius: 5px;
+		        border-radius: 5px;	
+	}
+
+	/* Toggle Link text */
+	.toggle a.toggle-trigger {
+		display:block;
+		padding: 10px 20px 15px 20px;
+		position:relative;
+		text-decoration: none;
+		color: #666;
+	}
+
+	/* Toggle Link hover state */
+	.toggle a.toggle-trigger:hover {
+		opacity: .8;
+		text-decoration: none;
+	}
+
+	/* Toggle link when clicked */
+	.toggle a.active {
+		text-decoration: none;
+		border-bottom: 1px solid #e5e5e5;
+		-webkit-box-shadow: 0 8px 6px -6px #ccc;
+		   -moz-box-shadow: 0 8px 6px -6px #ccc;
+		        box-shadow: 0 8px 6px -6px #ccc;
+		color: #000;
+	}
+
+	/* Lets add a "-" before the toggle link */
+	.toggle a.toggle-trigger:before {
+		content: "+";	/* You can add any symbol, font icon, or graphic icon */
+		margin-right: 10px;
+		font-size: 1.3em;	
+	}
+
+	/* When the toggle is active, change the "-" to a "+" */
+	.toggle a.active.toggle-trigger:before {
+		content: "-";
+	}
+
+	/* The content of the toggle */
+	.toggle .toggle-content {
+		padding: 10px 20px 15px 20px;
+		color:#666;
+	}
+
 	</style>
 </head>
 <body>
@@ -1325,23 +1585,52 @@
 	</nav>
 	
 	<div id="box">
-		<div id="map-canvas"></div>
-		<div id="negotiation">
-			<div>
-			    Select <select onchange="javascript:negotiationselectionchanged()" id = "negotiation-places"><option></option></select>
-			    <div id="ongoing_negotiation">
+		
+		<div class='row'>
+			<div id="map-canvas"></div>
+				<div id="negotiation">
+					<div>
+					    Select <select onchange="javascript:negotiationselectionchanged()" id = "negotiation-places"><option></option></select>
+					    <div id="ongoing_negotiation">
 
-			    </div>	
-			</div>
-		</div>
-		<div id="safe_path">
-			<div>
-			    <form id='obstructions_checklist' action="javascript:CreateSafePath()">
-					
-				</form>
-			</div>
+					    </div>	
+					</div>
+				</div>
+
+				<div id="safe_path">
+					<div>
+					    <form id='obstructions_checklist' action="javascript:CreateSafePath()">
+							
+						</form>
+					</div>
+				</div>
+	</div>
+		
+	<div class="toggle" id="chatbox">
+
+		<a href="#" title="Title of Toggle" class="toggle-trigger">Chat Here</a>
+
+		<div class="toggle-content">
+			<div class="chat-box">
+			            
+			            
+			            <div id="messages" class="messages">
+				                <ul id="list">
+				                   
+
+				                </ul>
+			                <div class="clear"></div>
+			            </div>
+			            
+			            <div class="input-box">
+			                <textarea placeholder="Enter your message..." id="text-message"></textarea>
+			            </div>
+			            <button class="btn btn-primary" type="button" onclick="chat()" style="margin-top:10px;margin-left:40%;">Send</button>
+			        </div>
 		</div>
 	</div>
+	</div>
+
 	<div class="loginmodal" id="parameter_modal" style="display:none;">
 		<h1>Enter Parameters</h1>
 		<form class="loginform" id="parameter_form" method="post" action="index.html">
